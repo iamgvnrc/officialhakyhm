@@ -1579,3 +1579,39 @@ body.gallery-open{overflow:hidden}
 .epk-live .epk-kicker{color:#e77983}
 @media(max-width:900px){.epk-live{padding:28px}.epk-live-head{display:block}.epk-live-head>p{margin-top:12px}.epk-live-feature{grid-template-columns:1fr}.epk-live-grid{grid-template-columns:1fr}}
 @media(max-width:560px){.epk-live{padding:20px}.epk-live-head h3{font-size:32px}.epk-live-info{padding:18px 4px 8px}}
+
+
+/* =========================
+   MERCH / HAKYHM BLACK TEE
+========================= */
+.merch-section{min-height:auto;background:#0a0a0a;padding:120px 5vw 135px;border-top:1px solid rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.04)}
+.merch-inner{width:min(100%,1250px);margin:0 auto}
+.merch-heading{text-align:center;margin-bottom:58px}
+.merch-heading h2{margin-bottom:12px}
+.merch-intro{margin:0 auto!important;color:#a9a1a1!important}
+.merch-product{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(340px,.85fr);gap:64px;align-items:center;text-align:left}
+.merch-images{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.merch-image-card{position:relative;background:#050505;border:1px solid rgba(255,255,255,.09);overflow:hidden;box-shadow:0 24px 55px rgba(0,0,0,.42);transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease}
+.merch-image-card:hover{transform:translateY(-7px);border-color:rgba(180,0,0,.5);box-shadow:0 30px 65px rgba(0,0,0,.58)}
+.merch-image-card img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover}
+.merch-image-card span{position:absolute;left:12px;bottom:12px;padding:7px 10px;background:rgba(0,0,0,.78);font-size:8px;font-weight:800;letter-spacing:2px;color:#eee}
+.merch-details{padding:8px 0}
+.merch-kicker{margin:0 0 12px;color:#a40000;font-size:9px;font-weight:800;letter-spacing:3px}
+.merch-details h3{margin:0;color:#f2eded;font-family:Anton,sans-serif;font-size:clamp(34px,4vw,56px);line-height:.95;letter-spacing:1px}
+.merch-price{margin-top:18px;font-family:Anton,sans-serif;font-size:30px;color:#fff}
+.merch-description{margin:20px 0 25px!important;color:#a9a1a1!important;line-height:1.8!important;font-size:13px!important}
+.merch-specs{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid rgba(255,255,255,.1);border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:24px}
+.merch-specs div{padding:12px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.merch-specs div:nth-last-child(-n+2){border-bottom:0}
+.merch-specs strong,.merch-specs span{display:block}
+.merch-specs strong{font-size:8px;letter-spacing:2px;color:#6f6969;text-transform:uppercase;margin-bottom:5px}
+.merch-specs span{font-size:11px;color:#ded8d8}
+.merch-size-label{display:block;margin-bottom:8px;font-size:8px;font-weight:800;letter-spacing:2px;color:#8d8585}
+.merch-size{width:100%;height:48px;padding:0 14px;background:#111;color:#fff;border:1px solid rgba(255,255,255,.18);font-family:Montserrat,Arial,sans-serif;outline:none;margin-bottom:18px}
+.merch-size:focus{border-color:#a40000}
+.merch-buy-button{display:flex;min-height:58px;align-items:center;justify-content:center;background:#ece9e7;color:#111;text-decoration:none;font-family:Anton,sans-serif;letter-spacing:1.5px;font-size:13px;position:relative;transition:.2s}
+.merch-buy-button:after{content:"";position:absolute;width:9px;height:100%;right:-9px;bottom:-8px;background:#b30000;z-index:0}
+.merch-buy-button:hover{transform:translate(-3px,-3px);background:#fff}
+.merch-note{font-size:9px!important;line-height:1.6!important;color:#6f6969!important;text-align:center;margin:18px 0 0!important}
+@media(max-width:900px){.merch-section{padding:90px 7vw 105px}.merch-product{grid-template-columns:1fr;gap:48px}.merch-details{max-width:700px;width:100%;margin:0 auto}.merch-heading{margin-bottom:42px}}
+@media(max-width:560px){.merch-section{padding:78px 6vw 90px}.merch-images{gap:10px}.merch-details h3{font-size:38px}.merch-specs{gap:0}.merch-specs div{padding:10px 0}.merch-buy-button{font-size:12px}}
