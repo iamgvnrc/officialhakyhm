@@ -640,3 +640,48 @@ body.has-player{padding-bottom:92px}
   st.textContent = css;
   document.head.appendChild(st);
 })();
+
+/* Clerk sign-in: adds "Sign in" to the menu, and the user's avatar once signed in */
+window.addEventListener('load', async () => {
+  if (!window.Clerk) return;
+  try {
+    await Clerk.load({ ui: { ClerkUI: window.__internal_ClerkUICtor } });
+  } catch (err) {
+    console.error('Clerk failed to load', err);
+    return;
+  }
+
+  const nav = document.querySelector('.nav-links');
+  if (!nav) return;
+  let lastState = null;
+
+  function render() {
+    const signedIn = !!Clerk.isSignedIn;
+    if (signedIn === lastState) return;
+    lastState = signedIn;
+    nav.querySelectorAll('[data-hk-account]').forEach(el => el.remove());
+
+    if (signedIn) {
+      const slot = document.createElement('span');
+      slot.dataset.hkAccount = '1';
+      slot.style.display = 'inline-flex';
+      slot.style.alignItems = 'center';
+      nav.appendChild(slot);
+      Clerk.mountUserButton(slot);
+    } else {
+      const link = document.createElement('a');
+      link.href = '#';
+      link.textContent = 'Sign in';
+      link.dataset.hkAccount = '1';
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        if (nav.classList.contains('mobile-open')) document.querySelector('.menu-button')?.click();
+        Clerk.openSignIn();
+      });
+      nav.appendChild(link);
+    }
+  }
+
+  render();
+  Clerk.addListener(render);
+});
