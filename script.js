@@ -687,39 +687,87 @@ window.addEventListener('load', async () => {
 });
 
 
-/* ===== Submit Your Music form ===== */
+/* ===== Submit Your Music form -> Supabase queue (link and/or MP3) ===== */
 (function () {
   const form = document.getElementById('submit-form');
   if (!form) return;
   const status = document.getElementById('submit-status');
-  const TO = 'info@hakyhm.com';
+  const btn = form.querySelector('.submit-button');
+  const cfg = window.HAKYHM_SUPABASE || {};
+  const MAX_BYTES = 25 * 1024 * 1024;
 
-  form.addEventListener('submit', (e) => {
+  function setStatus(msg, isError) {
+    status.textContent = msg;
+    status.classList.toggle('error', !!isError);
+  }
+  const authHeaders = () => ({ apikey: cfg.anonKey, Authorization: 'Bearer ' + cfg.anonKey });
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    status.classList.remove('error');
+    setStatus('', false);
     if (!form.checkValidity()) {
       form.reportValidity();
-      status.textContent = 'Please fill in every required field with a valid link and email.';
-      status.classList.add('error');
+      setStatus('Please fill in every required field.', true);
       return;
     }
     const d = new FormData(form);
-    const artist = (d.get('artist') || '').toString().trim();
-    const title = (d.get('title') || '').toString().trim();
-    const subject = 'Music Submission: ' + artist + ' - ' + title;
-    const body = [
-      'Artist: ' + artist,
-      'Email: ' + d.get('email'),
-      'Track: ' + title,
-      'Genre: ' + d.get('genre'),
-      'Link: ' + d.get('link'),
-      '',
-      'Message:',
-      (d.get('message') || '').toString().trim() || '(none)',
-      '',
-      'Rights confirmed: yes'
-    ].join('\n');
-    status.textContent = 'Opening your email app with your submission ready to send. If nothing opens, email ' + TO + ' directly.';
-    window.location.href = 'mailto:' + TO + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    const link = String(d.get('link') || '').trim();
+    const fileInput = form.querySelector('input[name="file"]');
+    const file = fileInput && fileInput.files && fileInput.files[0];
+
+    if (!link && !file) {
+      setStatus('Add a track link, upload an MP3, or both.', true);
+      return;
+    }
+    if (file) {
+      if (!/\.mp3$/i.test(file.name)) { setStatus('Only MP3 files are accepted.', true); return; }
+      if (file.size > MAX_BYTES) { setStatus('That MP3 is over 25MB. Please send a link instead, or a smaller file.', true); return; }
+    }
+    if (!cfg.url || !cfg.anonKey || cfg.url.includes('YOUR-PROJECT')) {
+      setStatus('Submissions are not connected yet. Please email info@hakyhm.com for now.', true);
+      return;
+    }
+
+    const label = btn.innerHTML;
+    btn.disabled = true;
+    btn.textContent = file ? 'Uploading...' : 'Sending...';
+    try {
+      let filePath = null;
+      if (file) {
+        const id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2);
+        filePath = id + '.mp3';
+        const up = await fetch(cfg.url + '/storage/v1/object/submissions/' + filePath, {
+          method: 'POST',
+          headers: Object.assign({ 'Content-Type': 'audio/mpeg', 'x-upsert': 'false' }, authHeaders()),
+          body: file
+        });
+        if (!up.ok) throw new Error('Upload failed: HTTP ' + up.status);
+      }
+
+      const row = {
+        artist: String(d.get('artist') || '').trim(),
+        email: String(d.get('email') || '').trim(),
+        title: String(d.get('title') || '').trim(),
+        genre: String(d.get('genre') || '').trim(),
+        link: link || null,
+        file_path: filePath,
+        message: String(d.get('message') || '').trim() || null,
+        rights_confirmed: true
+      };
+      const res = await fetch(cfg.url + '/rest/v1/submissions', {
+        method: 'POST',
+        headers: Object.assign({ 'Content-Type': 'application/json', Prefer: 'return=minimal' }, authHeaders()),
+        body: JSON.stringify(row)
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      form.reset();
+      setStatus("You're in the queue! I'll listen in the order tracks come in.", false);
+    } catch (err) {
+      console.error('Submission failed', err);
+      setStatus('Something went wrong sending your track. Please try again in a minute.', true);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = label;
+    }
   });
 })();
