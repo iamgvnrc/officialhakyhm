@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const EXCLUDED_RELEASES = [
     'second chance', '2nd chance', 'time machine', 'cold as you',
-    'better life', 'adding up', 'sum 2 prove', 'made it here'
+    'better life', 'adding up', 'sum 2 prove', 'made it here' , 'dont call me' , 'all for you'
   ];
 
   function normalizeReleaseTitle(value) {
